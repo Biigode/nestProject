@@ -1,27 +1,40 @@
 import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
-import { CreateTaskDto } from './dto/create-task.dto';
-import { UpdateTaskDto } from './dto/update-task.dto';
+import { TaskDto } from './dto/task.dto';
+
+import { Task } from './entities/task.entity';
+import { TaskDocument, TaskSchema } from './schemas/task.schema';
 
 @Injectable()
 export class TaskService {
-  private readonly tasks: Array<CreateTaskDto> = [];
-  create(createTaskDto: CreateTaskDto): string {
-    const { name } = createTaskDto;
-    this.tasks.push({ id: uuidv4(), name });
-    return 'This action adds a new task';
+  constructor(
+    @InjectModel(TaskSchema.name) private taskModel: Model<TaskSchema>,
+  ) {}
+
+  private readonly tasks: Array<TaskDto> = [];
+  async create(taskDto: TaskDto): Promise<Task> {
+    const { name } = taskDto;
+
+    const createdTask = await this.taskModel.create<TaskDocument>({
+      name,
+      id: uuidv4(),
+    });
+
+    return createdTask;
   }
 
-  findAll(): Array<CreateTaskDto> {
-    return this.tasks;
+  async findAll(): Promise<Array<Task>> {
+    return this.taskModel.find<TaskDocument>().exec();
   }
 
   findOne(id: string) {
     return this.tasks.find((task) => task.id === id);
   }
 
-  update(id: string, updateTaskDto: UpdateTaskDto) {
-    const { name } = updateTaskDto;
+  update(id: string, taskDto: TaskDto) {
+    const { name } = taskDto;
     const taskPosition = this.tasks.findIndex((task) => task.id === id);
     this.tasks.splice(taskPosition, 1, { id, name });
 
