@@ -13,37 +13,36 @@ export class TaskService {
     @InjectModel(TaskSchema.name) private taskModel: Model<TaskSchema>,
   ) {}
 
-  private readonly tasks: Array<TaskDto> = [];
   async create(taskDto: TaskDto): Promise<Task> {
     const { name } = taskDto;
-
     const createdTask = await this.taskModel.create<TaskDocument>({
       name,
       id: uuidv4(),
     });
-
+    createdTask.save();
     return createdTask;
   }
 
   async findAll(): Promise<Array<Task>> {
-    return this.taskModel.find<TaskDocument>().exec();
+    return await this.taskModel.find<TaskDocument>().exec();
   }
 
-  findOne(id: string) {
-    return this.tasks.find((task) => task.id === id);
+  async findOne(id: string): Promise<Task> {
+    return await this.taskModel.findOne<TaskDocument>({ id }).exec();
   }
 
-  update(id: string, taskDto: TaskDto) {
+  async update(id: string, taskDto: TaskDto): Promise<boolean> {
     const { name } = taskDto;
-    const taskPosition = this.tasks.findIndex((task) => task.id === id);
-    this.tasks.splice(taskPosition, 1, { id, name });
-
-    return `Task ${id} updated`;
+    const { matchedCount, modifiedCount } = await this.taskModel
+      .updateOne({ id, name })
+      .exec();
+    if (matchedCount && modifiedCount) return true;
+    return false;
   }
 
-  remove(id: string) {
-    const taskPosition = this.tasks.findIndex((task) => task.id === id);
-    this.tasks.splice(taskPosition, 1);
-    return `Task ${id} removed`;
+  async remove(id: string): Promise<boolean> {
+    const { deletedCount } = await this.taskModel.deleteOne({ id }).exec();
+    if (deletedCount) return true;
+    return false;
   }
 }
