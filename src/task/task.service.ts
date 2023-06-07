@@ -31,10 +31,10 @@ export class TaskService {
     return await this.taskModel.findOne<TaskDocument>({ id }).exec();
   }
 
-  async update(id: string, taskDto: TaskDto): Promise<boolean> {
+  async update(id: string, taskDto: TaskDto): Promise<any> {
     const { name } = taskDto;
     const { matchedCount, modifiedCount } = await this.taskModel
-      .updateOne({ id, name })
+      .updateOne({id}, {name})
       .exec();
     if (matchedCount && modifiedCount) return true;
     return false;

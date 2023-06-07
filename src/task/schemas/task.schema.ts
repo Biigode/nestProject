@@ -4,7 +4,7 @@ import { Task } from '../entities/task.entity';
 
 export type TaskDocument = HydratedDocument<TaskSchema>;
 
-@Schema()
+@Schema({ collection: 'tasks', timestamps: true })
 export class TaskSchema implements Task {
   @Prop()
   id: string;

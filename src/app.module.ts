@@ -4,9 +4,10 @@ import { AppService } from './app.service';
 import { CarsModule } from './cars/cars.module';
 import { TaskModule } from './task/task.module';
 import { MongooseModule } from '@nestjs/mongoose';
+import { UsersModule } from './users/users.module';
 
 @Module({
-  imports: [CarsModule, TaskModule,MongooseModule.forRoot('mongodb://localhost:27017/nest')],
+  imports: [CarsModule, TaskModule,MongooseModule.forRoot('mongodb://localhost:27017/nest'), UsersModule],
   controllers: [AppController],
   providers: [AppService],
 })
