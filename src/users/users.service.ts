@@ -1,26 +1,49 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { TaskSchema } from 'src/task/schemas/task.schema';
+import { UserDto } from './dto/user.dto';
+import { User } from './entities/user.entity';
+import { UserDocument, UserSchema } from './schemas/user.schema';
 
 @Injectable()
 export class UsersService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  constructor(
+    @InjectModel(UserSchema.name) private userModel: Model<UserSchema>,
+    @InjectModel(TaskSchema.name) private taskModel: Model<TaskSchema>,
+  ) {}
+  async create(createUserDto: UserDto): Promise<User> {
+    const createdUser = await this.userModel.create<UserDocument>(
+      createUserDto,
+    );
+    createdUser.save();
+    return createdUser;
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findAll(): Promise<Array<User>> {
+    return await this.userModel.find<UserDocument>().exec();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(email: string): Promise<User> {
+    return await this.userModel
+      .findOne<UserDocument>({ email: email })
+      .populate('tasks', '', this.taskModel)
+      .exec();
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(email: string, updateUserDto: UserDto): Promise<boolean> {
+    const { modifiedCount, matchedCount } = await this.userModel
+      .updateOne({ email: email }, updateUserDto)
+      .exec();
+    if (matchedCount && modifiedCount) return true;
+    return false;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(email: string): Promise<boolean> {
+    const { deletedCount } = await this.userModel
+      .deleteOne({ email: email })
+      .exec();
+    if (deletedCount) return true;
+    return false;
   }
 }
