@@ -27,7 +27,7 @@ export class UsersService {
   async findOne(email: string): Promise<User> {
     return await this.userModel
       .findOne<UserDocument>({ email: email })
-      .populate('tasks', '', this.taskModel)
+      .populate('tasks', 'name', this.taskModel)
       .exec();
   }
 
