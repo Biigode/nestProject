@@ -31,6 +31,10 @@ export class UsersService {
       .exec();
   }
 
+  async findOneByEmail(email: string): Promise<User> {
+    return await this.userModel.findOne<UserDocument>({ email: email }).exec();
+  }
+
   async update(email: string, updateUserDto: UserDto): Promise<boolean> {
     const { modifiedCount, matchedCount } = await this.userModel
       .updateOne({ email: email }, updateUserDto)
