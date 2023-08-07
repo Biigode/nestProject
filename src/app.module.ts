@@ -8,6 +8,7 @@ import { TaskModule } from './task/task.module';
 import { UsersModule } from './users/users.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth/auth.guard';
+import { CacheModule } from './cache/cache.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { AuthGuard } from './auth/auth.guard';
     UsersModule,
     MongooseModule.forRoot('mongodb://localhost:27017/nest'),
     AuthModule,
+    CacheModule,
   ],
   controllers: [AppController],
   providers: [
