@@ -6,14 +6,20 @@ import { Cache } from 'cache-manager';
 export class CacheService {
   constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {}
 
-  async retrieveData(): Promise<any> {
-    const value = await this.cacheManager.get('key');
-    return value;
+  async retrieveData(bearer: string): Promise<string> {
+    const value = await this.cacheManager.get<{ access_token?: string }>(
+      bearer,
+    );
+    return value?.access_token || null;
   }
 
-  async storeData(): Promise<void> {
-    await this.cacheManager.set('key', {
-      teste: 'teste do bigode',
-    },10000);
+  async storeData(bearer: string): Promise<void> {
+    await this.cacheManager.set(
+      bearer,
+      {
+        access_token: bearer,
+      },
+      200000,
+    );
   }
 }
