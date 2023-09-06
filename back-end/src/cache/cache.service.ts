@@ -19,7 +19,7 @@ export class CacheService {
       {
         access_token: bearer,
       },
-      200000,
+      360000000,
     );
   }
 }
