@@ -1,0 +1,47 @@
+
+.container{
+    @apply
+    flex
+    flex-col
+    w-96
+    justify-between
+    items-center
+    ;
+   height: 600px;
+}
+
+.input-div{
+    @apply
+    flex
+    flex-row
+    w-96
+    h-9
+    bg-white
+    items-center
+    rounded-md     
+    shadow-md 
+    shadow-slate-400
+    ;
+}
+
+.tarefas-container{
+    @apply
+    flex
+    flex-col
+    h-96
+    w-96
+   bg-white
+    rounded-md    
+    shadow-md
+    shadow-slate-400
+    overflow-x-auto
+    px-2
+    ;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+/* Hide scrollbar for Chrome, Safari and Opera */
+.tarefas-container::-webkit-scrollbar {
+    display: none;
+  }
+  
