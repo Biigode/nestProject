@@ -10,11 +10,12 @@ import {
 
 import { UsersService } from './users.service';
 import { UserDto } from './dto/user.dto';
+import { Public } from 'src/auth/constants/constants';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
-
+  @Public()
   @Post()
   create(@Body() createUserDto: UserDto) {
     return this.usersService.create(createUserDto);

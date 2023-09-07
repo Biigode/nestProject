@@ -30,17 +30,17 @@ export default function Home() {
   const [updateUserData, setUpdateUserData] = useState(false);
 
   useEffect(() => {
-    const updatePageData = async (): Promise<void> => {
+    const handleUpdatePageData = async (): Promise<void> => {
       const data = await axios.get(`http://localhost:3000/users/${email}`, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
       setUser(data.data);
       setUpdateUserData((prev) => !prev);
     };
-    if ((user || accessToken) && updateUserData) updatePageData();
+    if ((user || accessToken) && updateUserData) handleUpdatePageData();
   }, [updateUserData, accessToken, email, user]);
 
-  const updateUserTasks = async (tasks: Array<string>): Promise<void> => {
+  const handleUpdateUserTasks = async (tasks: Array<string>): Promise<void> => {
     await axios.patch(
       `http://localhost:3000/users/${user?.email}`,
       { tasks },
@@ -63,14 +63,14 @@ export default function Home() {
     );
     const newTasks = user?.tasks.map((task) => task._id) || [];
     newTasks.push(data.data._id);
-    await updateUserTasks(newTasks);
+    await handleUpdateUserTasks(newTasks);
     setTask("");
   };
 
   const handleRemoveTask = async (id: string): Promise<void> => {
     const removedTask = user?.tasks.filter((task) => task._id !== id);
     const removedTaskIds = removedTask?.map((task) => task._id) || [];
-    await updateUserTasks(removedTaskIds);
+    await handleUpdateUserTasks(removedTaskIds);
   };
 
   const handleLogin = async (): Promise<void> => {
