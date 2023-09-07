@@ -5,11 +5,12 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import "./page.styles.css";
 
 interface ITask {
+  _id: string;
   id: string;
   name: string;
 }
@@ -22,19 +23,54 @@ interface IUser {
 }
 
 export default function Home() {
-  const [tasks, setTasks] = useState<Array<ITask>>([]);
   const [task, setTask] = useState("");
   const [user, setUser] = useState<IUser>();
   const [email, setEmail] = useState("");
+  const [accessToken, setAccessToken] = useState("");
+  const [updateUserData, setUpdateUserData] = useState(false);
 
-  const handleAddTask = () => {
+  useEffect(() => {
+    const updatePageData = async (): Promise<void> => {
+      const data = await axios.get(`http://localhost:3000/users/${email}`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      setUser(data.data);
+      setUpdateUserData((prev) => !prev);
+    };
+    if ((user || accessToken) && updateUserData) updatePageData();
+  }, [updateUserData, accessToken, email, user]);
+
+  const updateUserTasks = async (tasks: Array<string>): Promise<void> => {
+    await axios.patch(
+      `http://localhost:3000/users/${user?.email}`,
+      { tasks },
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      }
+    );
+    setUpdateUserData((prev) => !prev);
+  };
+
+  const handleAddTask = async (): Promise<void> => {
     if (!task.trim()) return;
-    setTasks([...tasks, { id: uuidv4(), name: task }]);
+    const newTask = { id: uuidv4(), name: task };
+    const data = await axios.post(
+      "http://localhost:3000/task",
+      { ...newTask },
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      }
+    );
+    const newTasks = user?.tasks.map((task) => task._id) || [];
+    newTasks.push(data.data._id);
+    await updateUserTasks(newTasks);
     setTask("");
   };
 
-  const handleRemoveTask = (id: string) => {
-    setTasks(tasks.filter((task) => task.id !== id));
+  const handleRemoveTask = async (id: string): Promise<void> => {
+    const removedTask = user?.tasks.filter((task) => task._id !== id);
+    const removedTaskIds = removedTask?.map((task) => task._id) || [];
+    await updateUserTasks(removedTaskIds);
   };
 
   const handleLogin = async (): Promise<void> => {
@@ -42,11 +78,8 @@ export default function Home() {
     const data = await axios.post("http://localhost:3000/auth/login ", {
       email: email,
     });
-    console.log(data.data.access_token);
-    const userData = await axios.get(`http://localhost:3000/users/${email}`, {
-      headers: { Authorization: `Bearer ${data.data.access_token}` },
-    });
-    setUser(userData.data);
+    setAccessToken(data.data.access_token);
+    setUpdateUserData((prev) => !prev);
   };
 
   const renderLogin = () => {
@@ -96,22 +129,22 @@ export default function Home() {
               </button>
             </div>
             <div className="tarefas-container">
-              {tasks.map((tarefa) => (
+              {user.tasks?.map((tarefa) => (
                 <div
                   className="flex flex-row border-b w-full justify-between items-center"
-                  key={tarefa.id}
+                  key={tarefa._id}
                 >
                   <p className="font-sans font-light text-xl">{tarefa.name}</p>
                   <div className="flex flex-row w-14 justify-between">
                     <button
                       className="rounded-md text-white h-6 w-6"
-                      onClick={handleRemoveTask.bind(null, tarefa.id)}
+                      onClick={handleRemoveTask.bind(null, tarefa._id)}
                     >
                       <CheckIcon className="h-full w-full text-slate-400" />
                     </button>
                     <button
                       className="rounded-md text-white h-6 w-6"
-                      onClick={handleRemoveTask.bind(null, tarefa.id)}
+                      onClick={handleRemoveTask.bind(null, tarefa._id)}
                     >
                       <XMarkIcon className="h-full w-full text-slate-400" />
                     </button>
