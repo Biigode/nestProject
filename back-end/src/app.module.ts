@@ -1,18 +1,16 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AuthGuard } from './auth/auth.guard';
 import { AuthModule } from './auth/auth.module';
-import { CarsModule } from './cars/cars.module';
+import { AppCacheModule } from './cache/cache.module';
 import { TaskModule } from './task/task.module';
 import { UsersModule } from './users/users.module';
-import { APP_GUARD } from '@nestjs/core';
-import { AuthGuard } from './auth/auth.guard';
-import { AppCacheModule } from './cache/cache.module';
 
 @Module({
   imports: [
-    CarsModule,
     TaskModule,
     UsersModule,
     MongooseModule.forRoot('mongodb://localhost:27017/nest'),
