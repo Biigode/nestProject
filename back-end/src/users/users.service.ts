@@ -16,7 +16,7 @@ export class UsersService {
     const createdUser = await this.userModel.create<UserDocument>(
       createUserDto,
     );
-    createdUser.save();
+    await createdUser.save();
     return createdUser;
   }
 
@@ -36,18 +36,19 @@ export class UsersService {
   }
 
   async update(email: string, updateUserDto: UserDto): Promise<boolean> {
-    const { modifiedCount, matchedCount } = await this.userModel
-      .updateOne({ email: email }, updateUserDto)
+    const updatedUser = await this.userModel
+      .findOneAndUpdate({ email: email }, updateUserDto)
       .exec();
-    if (matchedCount && modifiedCount) return true;
-    return false;
+    if (!updatedUser) return false;
+    await updatedUser.save();
+    return true;
   }
 
   async remove(email: string): Promise<boolean> {
-    const { deletedCount } = await this.userModel
-      .deleteOne({ email: email })
+    const userTobeDeleted = await this.userModel
+      .findOneAndDelete({ email: email })
       .exec();
-    if (deletedCount) return true;
-    return false;
+    if (!userTobeDeleted) return false;
+    return true;
   }
 }

@@ -16,6 +16,25 @@ describe('UsersService unit spect', () => {
     taskSchema = unitRef.get('TaskSchemaModel');
   });
 
+  it('should create a user', async () => {
+    jest.spyOn(userSchema, 'create').mockImplementation((): any => {
+      return {
+        name: 'Victor Almeida',
+        email: 'victor.teste@teste.com',
+        tasks: [],
+        save: jest.fn(),
+      };
+    });
+    const user = await underTest.create({
+      name: 'Victor Almeida',
+      email: 'victor.teste@teste.com',
+    });
+
+    expect(user.name).toBe('Victor Almeida');
+    expect(user.email).toBe('victor.teste@teste.com');
+    expect(user.tasks.length).toBeLessThanOrEqual(0);
+  });
+
   it('should return all users', async () => {
     jest.spyOn(taskSchema, 'collection');
     jest.spyOn(userSchema, 'find').mockImplementation((): any => {
@@ -24,7 +43,7 @@ describe('UsersService unit spect', () => {
           {
             _id: '6487be2c950cf2462aa65333',
             name: 'Victor Almeida',
-            email: 'victor.freitas08@gmail.com',
+            email: 'victor.teste@teste.com',
             tasks: ['645d93ba827822eda6d0e750'],
             createdAt: '2023-06-13T00:54:04.581Z',
             updatedAt: '2023-06-13T00:54:34.079Z',
@@ -36,5 +55,90 @@ describe('UsersService unit spect', () => {
 
     const allUsers = await underTest.findAll();
     expect(allUsers.length).toEqual(1);
+  });
+
+  it('should return a user by email and populate his tasks', async () => {
+    const mockPopulate = jest.fn();
+    const execFunction = jest.fn().mockReturnValueOnce({
+      _id: '6487be2c950cf2462aa65333',
+      name: 'Victor Almeida',
+      email: 'victor.teste@teste.com',
+      tasks: [
+        {
+          _id: '645d93ba827822eda6d0e750',
+          name: 'Comprar coca zero',
+        },
+      ],
+      createdAt: '2023-06-13T00:54:04.581Z',
+      updatedAt: '2023-06-13T00:54:34.079Z',
+      __v: 0,
+    });
+
+    jest.spyOn(taskSchema, 'collection');
+    jest.spyOn(userSchema, 'findOne').mockImplementation((): any => {
+      return {
+        populate: mockPopulate.mockImplementationOnce(() => {
+          return {
+            exec: execFunction,
+          };
+        }),
+      };
+    });
+    const userByEmail = await underTest.findOne('victor.teste@teste.com');
+    expect(userByEmail.name).toEqual('Victor Almeida');
+    expect(userByEmail.email).toEqual('victor.teste@teste.com');
+    expect(userByEmail.tasks[0]).toEqual({
+      _id: '645d93ba827822eda6d0e750',
+      name: 'Comprar coca zero',
+    });
+    expect(mockPopulate).toHaveBeenCalledWith('tasks', 'name', taskSchema);
+  });
+
+  it('Should update the user', async () => {
+    jest.spyOn(userSchema, 'findOneAndUpdate').mockImplementation((): any => {
+      return {
+        exec: jest.fn().mockReturnValueOnce({
+          _id: '6487be2c950cf2462aa65333',
+          name: 'Victor Almeida',
+          email: 'victor.teste@teste.com',
+          tasks: [
+            {
+              _id: '645d93ba827822eda6d0e750',
+              name: 'Comprar coca zero',
+            },
+          ],
+          createdAt: '2023-06-13T00:54:04.581Z',
+          updatedAt: '2023-06-13T00:54:34.079Z',
+          __v: 0,
+          save: jest.fn(),
+        }),
+      };
+    });
+
+    const updatedUser = await underTest.update('victor.freitas08@teste.com', {
+      name: 'Victor Almeida',
+      email: 'victor.freitas08@teste.com',
+      tasks: [
+        { id: '645d93ba827822eda6d0e750', name: 'Comprar coca zero' },
+        { id: '645d93ba827822eda6d0e751', name: 'Comprar coca' },
+      ],
+    });
+
+    expect(updatedUser).toBe(true);
+  });
+
+  it('Should remove the user', async () => {
+    jest.spyOn(userSchema, 'findOneAndDelete').mockImplementation((): any => {
+      return {
+        exec: jest.fn().mockReturnValueOnce({
+          _id: '6487be2c950cf2462aa65333',
+          name: 'Victor Almeida',
+          email: 'victor.freitas08@teste.com',
+        }),
+      };
+    });
+
+    const removedUser = await underTest.remove('victor.freitas08@test.com');
+    expect(removedUser).toBe(true);
   });
 });
