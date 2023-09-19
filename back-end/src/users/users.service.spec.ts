@@ -36,7 +36,6 @@ describe('UsersService unit spect', () => {
   });
 
   it('should return all users', async () => {
-    jest.spyOn(taskSchema, 'collection');
     jest.spyOn(userSchema, 'find').mockImplementation((): any => {
       return {
         exec: jest.fn().mockReturnValueOnce([
@@ -49,12 +48,21 @@ describe('UsersService unit spect', () => {
             updatedAt: '2023-06-13T00:54:34.079Z',
             __v: 0,
           },
+          {
+            _id: '6487be2c950cf2462aa65333',
+            name: 'João kebler',
+            email: 'joao.kleber@teste.com',
+            tasks: ['645d93ba827822eda6d0e750'],
+            createdAt: '2023-06-13T00:54:04.581Z',
+            updatedAt: '2023-06-13T00:54:34.079Z',
+            __v: 0,
+          },
         ]),
       };
     });
 
     const allUsers = await underTest.findAll();
-    expect(allUsers.length).toEqual(1);
+    expect(allUsers.length).toEqual(2);
   });
 
   it('should return a user by email and populate his tasks', async () => {
@@ -124,7 +132,26 @@ describe('UsersService unit spect', () => {
       ],
     });
 
-    expect(updatedUser).toBe(true);
+    expect(updatedUser).toBeTruthy();
+  });
+
+  it('Should not update the user', async () => {
+    jest.spyOn(userSchema, 'findOneAndUpdate').mockImplementation((): any => {
+      return {
+        exec: jest.fn().mockReturnValueOnce(null),
+      };
+    });
+
+    const updatedUser = await underTest.update('victor.freitas08@teste.com', {
+      name: 'Victor Almeida',
+      email: 'victor.freitas08@teste.com',
+      tasks: [
+        { id: '645d93ba827822eda6d0e750', name: 'Comprar coca zero' },
+        { id: '645d93ba827822eda6d0e751', name: 'Comprar coca' },
+      ],
+    });
+
+    expect(updatedUser).toBeFalsy();
   });
 
   it('Should remove the user', async () => {
@@ -138,7 +165,24 @@ describe('UsersService unit spect', () => {
       };
     });
 
-    const removedUser = await underTest.remove('victor.freitas08@test.com');
-    expect(removedUser).toBe(true);
+    const removedUser = await underTest.remove('victor.freitas08@teste.com');
+    expect(removedUser).toBeTruthy();
+    expect(userSchema.findOneAndDelete).toBeCalledWith({
+      email: 'victor.freitas08@teste.com',
+    });
+  });
+
+  it('Should not remove the user', async () => {
+    jest.spyOn(userSchema, 'findOneAndDelete').mockImplementation((): any => {
+      return {
+        exec: jest.fn().mockReturnValueOnce(null),
+      };
+    });
+
+    const removedUser = await underTest.remove('victor.freitas08@teste.com');
+    expect(removedUser).toBeFalsy();
+    expect(userSchema.findOneAndDelete).toBeCalledWith({
+      email: 'victor.freitas08@teste.com',
+    });
   });
 });
