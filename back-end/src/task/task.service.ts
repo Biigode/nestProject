@@ -14,10 +14,10 @@ export class TaskService {
   ) {}
 
   async create(taskDto: TaskDto): Promise<Task> {
-    const { name } = taskDto;
+    const { name, id } = taskDto;
     const createdTask = await this.taskModel.create<TaskDocument>({
       name,
-      id: uuidv4(),
+      id: id ? id : uuidv4(),
     });
     createdTask.save();
     return createdTask;
@@ -33,16 +33,17 @@ export class TaskService {
 
   async update(id: string, taskDto: TaskDto): Promise<any> {
     const { name } = taskDto;
-    const { matchedCount, modifiedCount } = await this.taskModel
-      .updateOne({id}, {name})
+    const updatedTask = await this.taskModel
+      .findOneAndUpdate({ id }, { name })
       .exec();
-    if (matchedCount && modifiedCount) return true;
+    if (updatedTask) return true;
+    await updatedTask.save();
     return false;
   }
 
   async remove(id: string): Promise<boolean> {
-    const { deletedCount } = await this.taskModel.deleteOne({ id }).exec();
-    if (deletedCount) return true;
+    const deleted = await this.taskModel.findOneAndDelete({ id }).exec();
+    if (deleted) return true;
     return false;
   }
 }

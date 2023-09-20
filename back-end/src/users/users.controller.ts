@@ -7,10 +7,9 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-
 import { UsersService } from './users.service';
 import { UserDto } from './dto/user.dto';
-import { Public } from 'src/auth/constants/constants';
+import { Public } from '../auth/constants/constants';
 
 @Controller('users')
 export class UsersController {
