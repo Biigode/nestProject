@@ -1,0 +1,15 @@
+version: '3'
+services:
+  backend:
+    build: .
+    image: backend
+    ports:
+      - "3000:3000"
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - MONGO_URL=mongodb://mongo:27017/nest
+  redis:
+    image: redis
+  mongo:
+    image: mongo

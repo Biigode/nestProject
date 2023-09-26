@@ -13,7 +13,7 @@ import { UsersModule } from './users/users.module';
   imports: [
     TaskModule,
     UsersModule,
-    MongooseModule.forRoot('mongodb://localhost:27017/nest'),
+    MongooseModule.forRoot(`${process.env.MONGO_URL ?? 'mongodb://localhost:27017/nest'} `),
     AuthModule,
     AppCacheModule,
   ],

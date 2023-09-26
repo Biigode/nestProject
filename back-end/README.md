@@ -29,33 +29,47 @@
 ## Installation
 
 ```bash
-$ npm install
-$ docker run -d --name mongodb -p 27017:27017 mongo
-$ docker run -d --name redis-stack -p 6379:6379 -p 8001:8001 redis/redis-stack:latest
+ npm install
 ```
 
 ## Running the app
 
 ```bash
 # development
-$ npm run start
+
+#dependencies
+ docker run -d --name mongodb -p 27017:27017 mongo
+ 
+ docker run -d --name redis-stack -p 6379:6379 -p 8001:8001 redis/redis-stack:latest
+#start app in development mode
+ npm run start
 
 # watch mode
-$ npm run start:dev
+ npm run start:dev
 
 # production mode
-$ npm run start:prod
+ npm run start:prod
+```
+
+## Running with docker compose
+```bash
+docker-compose up
+```
+
+## Running with kubernets
+```bash
+kubectl apply -f deployment.yaml
 ```
 
 ## Test
 
 ```bash
 # unit tests
-$ npm run test
+ npm run test
 
 # e2e tests
-$ npm run test:e2e
+ npm run test:e2e
 
 # test coverage
-$ npm run test:cov
+ npm run test:cov
 ```
