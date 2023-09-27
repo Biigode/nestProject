@@ -1,0 +1,21 @@
+.tarefas-container{
+    @apply
+    flex
+    flex-col
+    h-96
+    w-96
+   bg-white
+    rounded-md    
+    shadow-md
+    shadow-slate-400
+    overflow-x-auto
+    px-2
+    ;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+/* Hide scrollbar for Chrome, Safari and Opera */
+.tarefas-container::-webkit-scrollbar {
+    display: none;
+  }
+  

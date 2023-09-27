@@ -1,0 +1,14 @@
+.input-div{ 
+    @apply
+    flex
+    flex-row
+    w-96
+    h-9
+    bg-white
+    items-center
+    rounded-md     
+    shadow-md 
+    shadow-slate-400
+    ;
+}
+
