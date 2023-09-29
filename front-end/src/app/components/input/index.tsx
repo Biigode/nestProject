@@ -1,18 +1,36 @@
 "use client";
+import { UserContext } from "@/app/page";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
+import axios from "axios";
+import { useContext, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import "./styles.css";
 
 interface IInputProps {
-  setTask: React.Dispatch<React.SetStateAction<string>>;
-  task: string;
-  handleAddTask: () => Promise<void>;
+  handleUpdateUserTasks: (tasks: Array<string>) => Promise<void>;
 }
 
-export const Input = ({
-  handleAddTask,
-  setTask,
-  task,
-}: IInputProps): JSX.Element => {
+export const Input = ({ handleUpdateUserTasks }: IInputProps): JSX.Element => {
+  const { user, setUser } = useContext(UserContext);
+  const [task, setTask] = useState("");
+
+  const handleAddTask = async (): Promise<void> => {
+    if (!task.trim()) return;
+    const newTask = { id: uuidv4(), name: task };
+    console.log('Criando uma task', user)
+    const data = await axios.post(
+      "http://localhost:3000/task",
+      { ...newTask },
+      {
+        headers: { Authorization: `Bearer ${user?.accessToken}` },
+      }
+    );
+    const newTasks = user?.tasks?.map((task) => task._id) || [];
+    newTasks.push(data.data._id);
+    await handleUpdateUserTasks(newTasks);
+    setTask("");
+  };
+
   return (
     <div className="input-div px-2">
       <input

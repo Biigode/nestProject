@@ -1,19 +1,30 @@
 "use client";
+import { UserContext } from "@/app/page";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
-import React from "react";
+import axios from "axios";
+import { useContext, useState } from "react";
 import "./styles.css";
 
-interface ILoginProps {
-  email: string;
-  setEmail: React.Dispatch<React.SetStateAction<string>>;
-  handleLogin: () => Promise<void>;
-}
+export const Login = (): JSX.Element => {
+  const { user, setUser } = useContext(UserContext);
+  const [email, setEmail] = useState("");
 
-export const Login = ({
-  email,
-  handleLogin,
-  setEmail,
-}: ILoginProps): JSX.Element => {
+  const handleLogin = async (): Promise<void> => {
+    if (!email.trim()) return;
+    const data = await axios.post("http://localhost:3000/auth/login ", {
+      email: email,
+    });
+
+    setUser({
+      _id: "",
+      email: email,
+      name: "",
+      tasks: [],
+      accessToken: data.data.access_token,
+      shouldUpdate: true,
+    });
+  };
+
   return (
     <div className="flex min-h-screen flex-col justify-center items-center p-24">
       <p className="italic font-sans font-light text-3xl mb-10">

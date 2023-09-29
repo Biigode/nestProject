@@ -1,14 +1,23 @@
 "use client";
-import { IUser } from "@/app/interfaces/IUser";
+import { ITask } from "@/app/interfaces/ITasks";
+import { UserContext } from "@/app/page";
 import { CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { useContext } from "react";
 import "./styles.css";
 
 interface ITasksProps {
-  user: IUser;
-  handleRemoveTask: (id: string) => Promise<void>;
+  handleUpdateUserTasks: (tasks: Array<string>) => Promise<void>;
 }
 
-export const Tasks = ({ user, handleRemoveTask }: ITasksProps): JSX.Element => {
+export const Tasks = ({ handleUpdateUserTasks }: ITasksProps): JSX.Element => {
+  const { user, setUser } = useContext(UserContext);
+
+  const handleRemoveTask = async (id: string): Promise<void> => {
+    const removedTask = user?.tasks?.filter((task) => task._id !== id);
+    const removedTaskIds = removedTask?.map((task) => task._id) || [];
+    await handleUpdateUserTasks(removedTaskIds);
+  };
+
   return (
     <div className="tarefas-container">
       {user?.tasks?.map((tarefa) => (
