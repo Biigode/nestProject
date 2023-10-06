@@ -1,4 +1,5 @@
 "use client";
+import { useUpdateUsers } from "@/app/hooks/useUpdateUsers";
 import { UserContext } from "@/app/page";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
@@ -6,18 +7,15 @@ import { useContext, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import "./styles.css";
 
-interface IInputProps {
-  handleUpdateUserTasks: (tasks: Array<string>) => Promise<void>;
-}
-
-export const Input = ({ handleUpdateUserTasks }: IInputProps): JSX.Element => {
-  const { user, setUser } = useContext(UserContext);
+export const Input = (): JSX.Element => {
+  const { user } = useContext(UserContext);
   const [task, setTask] = useState("");
+  const { execute } = useUpdateUsers();
 
   const handleAddTask = async (): Promise<void> => {
     if (!task.trim()) return;
     const newTask = { id: uuidv4(), name: task };
-    console.log('Criando uma task', user)
+    console.log("Criando uma task", user);
     const data = await axios.post(
       "http://localhost:3000/task",
       { ...newTask },
@@ -27,7 +25,7 @@ export const Input = ({ handleUpdateUserTasks }: IInputProps): JSX.Element => {
     );
     const newTasks = user?.tasks?.map((task) => task._id) || [];
     newTasks.push(data.data._id);
-    await handleUpdateUserTasks(newTasks);
+    await execute(newTasks);
     setTask("");
   };
 

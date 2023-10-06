@@ -1,21 +1,17 @@
 "use client";
-import { ITask } from "@/app/interfaces/ITasks";
+import { useUpdateUsers } from "@/app/hooks/useUpdateUsers";
 import { UserContext } from "@/app/page";
 import { CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useContext } from "react";
 import "./styles.css";
 
-interface ITasksProps {
-  handleUpdateUserTasks: (tasks: Array<string>) => Promise<void>;
-}
-
-export const Tasks = ({ handleUpdateUserTasks }: ITasksProps): JSX.Element => {
-  const { user, setUser } = useContext(UserContext);
-
+export const Tasks = (): JSX.Element => {
+  const { user } = useContext(UserContext);
+  const { execute } = useUpdateUsers();
   const handleRemoveTask = async (id: string): Promise<void> => {
     const removedTask = user?.tasks?.filter((task) => task._id !== id);
     const removedTaskIds = removedTask?.map((task) => task._id) || [];
-    await handleUpdateUserTasks(removedTaskIds);
+    await execute(removedTaskIds);
   };
 
   return (

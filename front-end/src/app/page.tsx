@@ -41,16 +41,6 @@ const Home = () => {
       handleUpdatePageData();
   }, [user]);
 
-  const handleUpdateUserTasks = async (tasks: Array<string>): Promise<void> => {
-    await axios.patch(
-      `http://localhost:3000/users/${user?.email}`,
-      { tasks },
-      {
-        headers: { Authorization: `Bearer ${user?.accessToken}` },
-      }
-    );
-    setUser({ ...user, shouldUpdate: !user?.shouldUpdate });
-  };
 
   return (
     <UserContext.Provider value={{ user, setUser }}>
@@ -62,8 +52,8 @@ const Home = () => {
             <p className="italic font-sans font-light text-3xl">
               Cadastre uma tarefa
             </p>
-            <Input handleUpdateUserTasks={handleUpdateUserTasks} />
-            <Tasks handleUpdateUserTasks={handleUpdateUserTasks} />
+            <Input />
+            <Tasks />
           </div>
           <Footer />
         </main>
