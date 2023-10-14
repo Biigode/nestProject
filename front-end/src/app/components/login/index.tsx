@@ -11,7 +11,7 @@ export const Login = (): JSX.Element => {
 
   const handleLogin = async (): Promise<void> => {
     if (!email.trim()) return;
-    const data = await axios.post("http://localhost:3000/auth/login ", {
+    const data = await axios.post("http://localhost:3000/auth/login", {
       email: email,
     });
 

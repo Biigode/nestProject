@@ -15,7 +15,7 @@ export const Input = (): JSX.Element => {
   const handleAddTask = async (): Promise<void> => {
     if (!task.trim()) return;
     const newTask = { id: uuidv4(), name: task };
-    console.log("Criando uma task", user);
+
     const data = await axios.post(
       "http://localhost:3000/task",
       { ...newTask },

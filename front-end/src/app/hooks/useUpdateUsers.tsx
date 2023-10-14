@@ -10,14 +10,19 @@ export const useUpdateUsers = (): IUseUpdateUsers => {
   const { user, setUser } = useContext(UserContext);
   const execute = useCallback(
     async (tasks: Array<string>): Promise<void> => {
-      await axios.patch(
-        `http://localhost:3000/users/${user?.email}`,
-        { tasks },
-        {
-          headers: { Authorization: `Bearer ${user?.accessToken}` },
-        }
-      );
-      setUser({ ...user, shouldUpdate: !user?.shouldUpdate });
+      try {
+        const updatedUser = await axios.patch(
+          `http://localhost:3000/users/${user?.email}`,
+          { tasks },
+          {
+            headers: { Authorization: `Bearer ${user?.accessToken}` },
+          }
+        );
+
+        setUser({ ...user, shouldUpdate: !user?.shouldUpdate });
+      } catch (error) {
+        console.log(error);
+      }
     },
     [setUser, user]
   );
