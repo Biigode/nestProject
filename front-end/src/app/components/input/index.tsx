@@ -30,7 +30,7 @@ export const Input = (): JSX.Element => {
   };
 
   return (
-    <div className="input-div px-2">
+    <div className="input-div px-2" data-testid="create-task-input-container">
       <input
         onChange={(e) => setTask(e.target.value)}
         value={task}
