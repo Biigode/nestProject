@@ -10,7 +10,7 @@ const setUserMock = jest.fn();
 const userMock: IUser = {
   _id: "6487be2c950cf2462aa65333",
   name: "Victor Almeida",
-  email: "victor.teste@teste.com",
+  email: "victor.freitas08@teste.com",
   tasks: [
     {
       _id: "64f90f3488589bfdbd9cf4e0",
@@ -42,7 +42,7 @@ describe("useUpdate - hook", () => {
     });
 
     expect(axiosPatch).toHaveBeenCalledWith(
-      "http://localhost:3000/users/victor.teste@teste.com",
+      "http://localhost:3000/users/victor.freitas08@teste.com",
       { tasks: ["123"] },
       {
         headers: {
@@ -55,7 +55,7 @@ describe("useUpdate - hook", () => {
       _id: "6487be2c950cf2462aa65333",
       accessToken:
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0ODdiZTJjOTUwY2YyNDYyYWE2NTMzMzMiLCJpYXQiOjE2MjMxNjY2NzQsImV4cCI6MTY",
-      email: "victor.teste@teste.com",
+      email: "victor.freitas08@teste.com",
       name: "Victor Almeida",
       shouldUpdate: true,
       tasks: [

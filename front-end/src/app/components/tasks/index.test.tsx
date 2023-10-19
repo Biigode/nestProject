@@ -48,10 +48,17 @@ describe("Tasks", () => {
     const taskCheck = screen.getByTestId("task-0-check");
     const taskRemove = screen.getByTestId("task-0-remove");
 
+    const task2 = screen.getByTestId("task-1");
+    const taskCheck2 = screen.getByTestId("task-1-check");
+    const taskRemove2 = screen.getByTestId("task-1-remove");
+
     expect(taskComponent).toBeInTheDocument();
     expect(task).toBeInTheDocument();
     expect(taskCheck).toBeInTheDocument();
     expect(taskRemove).toBeInTheDocument();
+    expect(task2).toBeInTheDocument();
+    expect(taskCheck2).toBeInTheDocument();
+    expect(taskRemove2).toBeInTheDocument();
   });
 
   it("should remove a task", () => {
